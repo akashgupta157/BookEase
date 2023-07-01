@@ -15,6 +15,8 @@ import { CiLocationOn } from "react-icons/ci";
 import { FcNext, FcPrevious } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
+import AuthModel from "../components/AuthModel";
+import { useSelector } from "react-redux";
 export default function Home() {
   //city
   const cities = [
@@ -270,15 +272,28 @@ export default function Home() {
       small: "Puri Hotels, OYO Delhi, Alleppey Houseboat, Mahabaleshwar Hotels",
     },
   ];
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const auth = useSelector((state) => state.authReducer.isAuthenticated);
   return (
     <>
       <DIV city={matchedCities}>
         <nav>
           <img src={logo} alt="" />
-          <button>
-            <p>Login or Create Account</p>
-            <BsChevronDown />
-          </button>
+          {auth ? (
+            <small>Hi Traveler</small>
+          ) : (
+            <button onClick={handleOpen}>
+              <p>Login or Create Account</p>
+              <BsChevronDown />
+            </button>
+          )}
+          <AuthModel open={open} onClose={handleClose} />
         </nav>
         <div className="tab">
           <div>
@@ -533,12 +548,14 @@ export default function Home() {
         <br />
         <div>
           <div>
-            <BsTwitter />
-            <FaFacebookF />
+            <section>
+              <BsTwitter />
+              <FaFacebookF />
+            </section>
+            <section>
+              © 2023 BookEase.com PVT. LTD. <br /> Country India USA UAE
+            </section>
           </div>
-          <section>
-            © 2023 BookEase.com PVT. LTD. <br /> Country India USA UAE
-          </section>
         </div>
       </Footer>
     </>
@@ -555,17 +572,22 @@ const Footer = styled.div`
     background-color: #010001;
     height: 150px;
     color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 20px 80px;
-    > div {
+    display: flex;
+    div {
       display: flex;
-      font-size: 32px;
-      gap: 40px;
-    }
-    section {
-      text-align: end;
+      justify-content: space-between;
+      align-items: center;
+      width: 1200px;
+      margin: auto;
+      > section:first-child {
+        display: flex;
+        font-size: 32px;
+        gap: 40px;
+      }
+      section {
+        text-align: end;
+      }
     }
   }
 `;
@@ -607,6 +629,11 @@ const DIV = styled.div`
     justify-content: space-between;
     align-items: center;
     height: 70px;
+    small {
+      color: white;
+      font-size: large;
+      font-weight: 700;
+    }
     img {
       width: 15%;
       cursor: pointer;

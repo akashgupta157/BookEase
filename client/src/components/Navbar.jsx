@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import logo from "../Image/BookEase-removebg-preview.png";
 import hotel from "../Image/hotel1.png";
@@ -11,7 +11,17 @@ import cab from "../Image/c.png";
 import forex from "../Image/f.png";
 import cf from "../Image/cf.png";
 import { AiOutlineLogin } from "react-icons/ai";
+import AuthModel from "./AuthModel";
+import { useSelector } from "react-redux";
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const auth = useSelector((state) => state.authReducer.isAuthenticated);
   return (
     <DIV>
       <img src={logo} alt="" />
@@ -53,10 +63,16 @@ export default function Navbar() {
           <p>Charter Flights</p>
         </div>
       </div>
-      <button>
-        <AiOutlineLogin />
-        Login or Create Account
-      </button>
+      {auth ? (
+        <small>Hi Traveler</small>
+      ) : (
+        <button onClick={handleOpen}>
+          <AiOutlineLogin />
+          Login or Create Account
+        </button>
+      )}
+
+      <AuthModel open={open} onClose={handleClose} />
     </DIV>
   );
 }
@@ -108,6 +124,11 @@ const DIV = styled.div`
       }
     }
   }
+  small {
+    margin-left: 24%;
+    font-size: large;
+    font-weight: 600;
+  }
   button {
     height: fit-content;
     width: 150px;
@@ -117,9 +138,12 @@ const DIV = styled.div`
     background-color: transparent;
     display: flex;
     align-items: center;
+    text-align: left;
     cursor: pointer;
+    gap: 5px;
     svg {
-      font-size: 30px;
+      font-size: 26px;
+      color: green;
     }
   }
 `;

@@ -13,7 +13,6 @@ export default function App() {
     window.addEventListener("scroll", handleScroll);
   }, []);
   let location = useLocation();
-  console.log(location.pathname);
   return (
     <>
       {location.pathname === "/" ? showComponent && <Navbar /> : <Navbar />}
