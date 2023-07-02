@@ -6,6 +6,7 @@ import { url } from "../components/url";
 import { MuiOtpInput } from "mui-one-time-password-input";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/authReducer/action";
+import { AiOutlineLoading } from "react-icons/ai";
 const style = {
   position: "absolute",
   top: "50%",
@@ -32,19 +33,26 @@ export default function AuthModel({ open, onClose }) {
   const [open1, setOpen1] = useState(false);
   const handleOpen1 = () => setOpen1(true);
   const handleClose1 = () => setOpen1(false);
-  const dispatch = useDispatch();
+  const [emailLoad, setEmailLoad] = useState(false);
+  const [otpLoad, setOtpLoad] = useState(true);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const handleForm = (e) => {
+  const dispatch = useDispatch();
+  const handleForm = async (e) => {
     e.preventDefault();
-    axios.post(`${url}/user`, { email }).then((res) => {
+    setEmailLoad(true);
+    await axios.post(`${url}/user`, { email }).then((res) => {
       setSetOTP(res.data.otp);
       setData(res.data);
       onClose();
       handleOpen1();
     });
+    setEmailLoad(false);
+  };
+  const emailApi = async () => {
+    await axios.post(`${url}/mail`, { to: email, otp: setOTP });
   };
   useEffect(() => {
-    axios.post(`${url}/mail`, { to: email, otp: setOTP });
+    emailApi();
   }, [setOTP]);
   const handleChange = (newValue) => {
     setOtp(newValue);
@@ -60,9 +68,11 @@ export default function AuthModel({ open, onClose }) {
   const isOtpValid = otp.length === 6;
   const handleSubmit = () => {
     if (otp === setOTP) {
+      setOpenSnackbar(true);
       dispatch(login(data));
       handleClose1();
     } else {
+      setOtp("");
       setOpenSnackbar(true);
     }
   };
@@ -102,7 +112,13 @@ export default function AuthModel({ open, onClose }) {
                     required
                   />
                   <br />
-                  <button>CONTINUE</button>
+                  <button>
+                    {emailLoad ? (
+                      <AiOutlineLoading className="spinner-icon" />
+                    ) : (
+                      "CONTINUE"
+                    )}
+                  </button>
                 </form>
                 <br />
                 <div>
@@ -158,8 +174,10 @@ export default function AuthModel({ open, onClose }) {
         }}
       >
         <SnackbarContent
-          style={{ backgroundColor: "red" }}
-          message="Enter Correct OTP !"
+          style={{ backgroundColor: otp === setOTP ? "#2db83d" : "red" }}
+          message={
+            otp === setOTP ? "Login Successful !" : "Enter Correct OTP !"
+          }
         />
       </Snackbar>
     </>
@@ -240,6 +258,18 @@ const Div = styled.div`
           border: 0;
           color: white;
           font-weight: bold;
+        }
+        .spinner-icon {
+          animation: rotation 1s infinite linear;
+          font-size: large;
+        }
+        @keyframes rotation {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       }
       div {

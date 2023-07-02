@@ -17,6 +17,7 @@ import { FaFacebookF } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
 import AuthModel from "../components/AuthModel";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 export default function Home() {
   //city
   const cities = [
@@ -280,6 +281,15 @@ export default function Home() {
     setOpen(false);
   };
   const auth = useSelector((state) => state.authReducer.isAuthenticated);
+  const navigate = useNavigate();
+  const obj = {
+    city: searchTerm,
+    checkInDate,
+    checkOutDate,
+  };
+  const to = () => {
+    navigate("hotel", { state: obj });
+  };
   return (
     <>
       <DIV city={matchedCities}>
@@ -405,7 +415,7 @@ export default function Home() {
               </p>
             </label>
           </div>
-          <button>SEARCH</button>
+          <button onClick={() => to()}>SEARCH</button>
         </div>
       </DIV>
       <br />
