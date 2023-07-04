@@ -2,7 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { CiLocationOn } from "react-icons/ci";
-import { BsChevronDown } from "react-icons/bs";
+import {
+  BsCheck,
+  BsChevronDown,
+  BsFillLightningFill,
+  BsSearch,
+} from "react-icons/bs";
+import Sidebar from "../components/Sidebar";
+import axios from "axios";
+import { url } from "../components/url";
+import CircularProgress from "@mui/material/CircularProgress";
 export default function HotelPage() {
   const location = useLocation();
   const [isSticky, setIsSticky] = useState(false);
@@ -25,6 +34,11 @@ export default function HotelPage() {
   };
   const navbarStyles1 = {
     display: isSticky ? "none" : "block",
+  };
+  const navbarStyle2 = {
+    position: isSticky ? "fixed" : "relative",
+    top: isSticky ? "65px" : null,
+    width: "100%",
   };
   //city
   const cities = [
@@ -112,6 +126,19 @@ export default function HotelPage() {
     setCheckOutDay(selectedDay);
   }, [checkOutDate]);
   //date
+  const [hotelLoading, setHotelLoading] = useState(false);
+  const [hotelData, setHotelData] = useState([]);
+  const [imgHover, setImgHover] = useState();
+  const fetchHotelData = async () => {
+    setHotelLoading(true);
+    await axios.get(`${url}/hotel/${location.state.city}`).then((res) => {
+      setHotelData(res.data);
+      setHotelLoading(false);
+    });
+  };
+  useEffect(() => {
+    fetchHotelData();
+  }, [location.state.city]);
   return (
     <>
       <Nav1 city={matchedCities} style={navbarStyles}>
@@ -189,7 +216,7 @@ export default function HotelPage() {
           <h1>1000 Properties in {location.state.city}</h1>
         </nav>
       </Nav1>
-      <Nav2>
+      <Nav2 style={navbarStyle2}>
         <div>
           <label htmlFor="">
             SORT BY:
@@ -204,111 +231,118 @@ export default function HotelPage() {
               </option>
             </select>
           </label>
-          <input type="search" name="" id="" />
+          <div>
+            <BsSearch />
+            <input
+              type="search"
+              name=""
+              id=""
+              placeholder="Search for locality / hotel name"
+            />
+          </div>
         </div>
       </Nav2>
-      <>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-      </>
+      {hotelLoading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "100px",
+          }}
+        >
+          <CircularProgress size={80} />
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            width: "1200px",
+            margin: "auto",
+            marginTop: "20px",
+            gap: "20px",
+          }}
+        >
+          <Sidebar />
+          <HotelList>
+            <h1>Popular in {location.state.city}</h1>
+            {hotelData.map((e) => (
+              <div className="mainHotel">
+                <section>
+                  <img src={imgHover || e.image[0]} alt="" />
+                  <div>
+                    <img
+                      src={e.image[1]}
+                      onMouseOver={() => setImgHover(e.image[1])}
+                      alt=""
+                    />
+                    <img
+                      src={e.image[2]}
+                      onMouseOver={() => setImgHover(e.image[2])}
+                      alt=""
+                    />
+                    <img
+                      src={e.image[3]}
+                      onMouseOver={() => setImgHover(e.image[3])}
+                      alt=""
+                    />
+                    <img
+                      src={e.image[0]}
+                      onMouseOver={() => setImgHover(e.image[0])}
+                      alt=""
+                    />
+                  </div>
+                </section>
+                <section>
+                  <span>
+                    <p>{e.rating}</p>
+                    {e.rating <= 5 && e.rating >= 4.3
+                      ? "Excellent"
+                      : e.rating < 4.3 && e.rating >= 3.5
+                      ? "Very Good"
+                      : "Good"}
+                  </span>
+                  <h1>{e.name}</h1>
+                  <small>{e.location}</small>
+                  <h5>Couple Friendly</h5>
+                  <h6>
+                    <BsCheck /> Book with ₹0 Payment
+                  </h6>
+                  <h6>
+                    <BsCheck />
+                    Free Cancellation
+                  </h6>
+                  <h4>
+                    <BsFillLightningFill />
+                    100% Monet Back Guarantee on Clean rooms with TV, AC & Free
+                    Wi-Fi
+                  </h4>
+                </section>
+                <section>₹{e.price}</section>
+              </div>
+            ))}
+          </HotelList>
+        </div>
+      )}
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </>
   );
 }
@@ -366,7 +400,8 @@ const Nav1 = styled.nav`
         padding: 10px;
         border-radius: 5px;
         list-style: none;
-        top: 120px;
+        top: 50px;
+        z-index: 100;
         li {
           font-size: 18px;
           padding: 5px;
@@ -442,11 +477,133 @@ const Nav1 = styled.nav`
 `;
 const Nav2 = styled.nav`
   background-color: #dff1fb;
-  padding: 20px;
-  div {
+  padding: 10px;
+  > div {
     width: 1200px;
     margin: auto;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    label {
+      color: #4a4a4a;
+      font-weight: bold;
+      select {
+        border: 0px;
+        outline: none;
+        background-color: transparent;
+        color: #33a5fe;
+        font-size: medium;
+        width: fit-content;
+        option {
+          color: black;
+        }
+      }
+    }
+    div {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      padding-left: 10px;
+      input {
+        padding: 8px;
+        width: 250px;
+        outline: none;
+        font-size: 14px;
+        border: 0;
+      }
+    }
+  }
+`;
+const HotelList = styled.div`
+  width: 80%;
+  .mainHotel {
+    border: 1px solid gray;
+    padding: 20px;
+    margin-top: 10px;
+    border-radius: 5px;
+    display: flex;
+    gap: 20px;
+    > section:first-child {
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      > img {
+        width: 100%;
+      }
+      div {
+        display: flex;
+        gap: 5px;
+        img {
+          cursor: pointer;
+          width: 58.5px;
+          object-fit: contain;
+        }
+      }
+    }
+    > section:nth-child(2) {
+      width: 450px;
+      span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #0a59b4;
+        font-size: 13px;
+        font-weight: 900;
+        p {
+          background-color: #0a59b4;
+          padding: 3px;
+          border-radius: 5px;
+          color: white;
+          font-size: 12px;
+          font-weight: 900;
+        }
+      }
+      h1 {
+        margin-top: 7px;
+      }
+      small {
+        color: #2d7fdc;
+        font-weight: 900;
+      }
+      h4 {
+        color: #aa846c;
+        margin-top: 7px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        svg {
+          border: 1px solid #aa846c;
+          padding: 2px;
+          font-size: 16px;
+          border-radius: 50%;
+        }
+      }
+      h5 {
+        margin-top: 7px;
+        color: #4a4a4a;
+        background-color: lightgray;
+        width: fit-content;
+        padding: 3px 5px;
+        border-radius: 5px;
+        margin-bottom: 7px;
+      }
+      h6 {
+        color: green;
+        display: flex;
+        align-items: center;
+        svg {
+          font-size: 20px;
+        }
+      }
+    }
+    > section:last-child {
+      width: 200px;
+    }
+  }
+  .mainHotel:hover {
+    border: 1px solid blue;
+    background-color: #f0f2f5;
   }
 `;

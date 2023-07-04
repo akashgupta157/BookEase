@@ -13,7 +13,7 @@ import cf from "../Image/cf.png";
 import { AiOutlineLogin } from "react-icons/ai";
 import AuthModel from "./AuthModel";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -22,11 +22,12 @@ export default function Navbar() {
   const handleClose = () => {
     setOpen(false);
   };
+  const navigate = useNavigate();
   const auth = useSelector((state) => state.authReducer.isAuthenticated);
   const location = useLocation();
   return (
     <DIV page={location.pathname}>
-      <img src={logo} alt="" />
+      <img src={logo} alt="" onClick={()=>navigate('/')}/>
       <div className="tab">
         <div>
           <img src={hotel} alt="" />
