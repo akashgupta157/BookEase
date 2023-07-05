@@ -40,6 +40,7 @@ export default function HotelPage() {
     top: isSticky ? "65px" : null,
     width: "100%",
   };
+  const navbarStyle3 = {};
   //city
   const cities = [
     "Mumbai",
@@ -139,6 +140,9 @@ export default function HotelPage() {
   useEffect(() => {
     fetchHotelData();
   }, [location.state.city]);
+  function percentage(percentageValue, totalValue) {
+    return (percentageValue * totalValue) / 100;
+  }
   return (
     <>
       <Nav1 city={matchedCities} style={navbarStyles}>
@@ -258,7 +262,7 @@ export default function HotelPage() {
             display: "flex",
             width: "1200px",
             margin: "auto",
-            marginTop: "20px",
+            marginTop: isSticky ? "150px" : "20px",
             gap: "20px",
           }}
         >
@@ -317,32 +321,21 @@ export default function HotelPage() {
                     Wi-Fi
                   </h4>
                 </section>
-                <section>₹{e.price}</section>
+                <section>
+                  <strike>
+                    ₹ {Math.ceil(e.price + percentage(10, e.price))}
+                  </strike>
+                  <h1>₹ {e.price}</h1>
+                  <small>
+                    + ₹{Math.ceil(percentage(18, e.price))} taxes & fees
+                  </small>
+                  <p>Per Night</p>
+                </section>
               </div>
             ))}
           </HotelList>
         </div>
       )}
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
     </>
   );
 }
@@ -518,13 +511,14 @@ const HotelList = styled.div`
   width: 80%;
   .mainHotel {
     border: 1px solid gray;
-    padding: 20px;
     margin-top: 10px;
     border-radius: 5px;
     display: flex;
-    gap: 20px;
+    justify-content: space-between;
+    cursor: pointer;
     > section:first-child {
-      width: 250px;
+      padding: 20px 0px 20px 20px;
+      width: 270px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -542,6 +536,7 @@ const HotelList = styled.div`
       }
     }
     > section:nth-child(2) {
+      padding: 20px 0;
       width: 450px;
       span {
         display: flex;
@@ -599,11 +594,33 @@ const HotelList = styled.div`
       }
     }
     > section:last-child {
-      width: 200px;
+      padding: 20px 20px 20px 0;
+      width: 180px;
+      background-color: #eaeaea;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      border-bottom-right-radius: 10px;
+      border-top-right-radius: 10px;
+      padding-bottom: 60px;
+      strike {
+        color: #8e8e8e;
+      }
+      small {
+        font-size: 12px;
+        color: #282424;
+      }
+      p {
+        color: #463d3d;
+      }
     }
   }
   .mainHotel:hover {
     border: 1px solid blue;
     background-color: #f0f2f5;
+    > section:last-child {
+      background-color: #cbddf8;
+    }
   }
 `;
