@@ -129,7 +129,6 @@ export default function HotelPage() {
   //date
   const [hotelLoading, setHotelLoading] = useState(false);
   const [hotelData, setHotelData] = useState([]);
-  const [imgHover, setImgHover] = useState();
   const fetchHotelData = async () => {
     setHotelLoading(true);
     await axios.get(`${url}/hotel/${location.state.city}`).then((res) => {
@@ -143,6 +142,13 @@ export default function HotelPage() {
   function percentage(percentageValue, totalValue) {
     return (percentageValue * totalValue) / 100;
   }
+  const [mainImages, setMainImages] = useState({});
+  const handleImageHover = (hotelId, image) => {
+    setMainImages((prevMainImages) => ({
+      ...prevMainImages,
+      [hotelId]: image,
+    }));
+  };
   return (
     <>
       <Nav1 city={matchedCities} style={navbarStyles}>
@@ -269,70 +275,61 @@ export default function HotelPage() {
           <Sidebar />
           <HotelList>
             <h1>Popular in {location.state.city}</h1>
-            {hotelData.map((e) => (
-              <div className="mainHotel">
-                <section>
-                  <img src={imgHover || e.image[0]} alt="" />
-                  <div>
-                    <img
-                      src={e.image[1]}
-                      onMouseOver={() => setImgHover(e.image[1])}
-                      alt=""
-                    />
-                    <img
-                      src={e.image[2]}
-                      onMouseOver={() => setImgHover(e.image[2])}
-                      alt=""
-                    />
-                    <img
-                      src={e.image[3]}
-                      onMouseOver={() => setImgHover(e.image[3])}
-                      alt=""
-                    />
-                    <img
-                      src={e.image[0]}
-                      onMouseOver={() => setImgHover(e.image[0])}
-                      alt=""
-                    />
-                  </div>
-                </section>
-                <section>
-                  <span>
-                    <p>{e.rating}</p>
-                    {e.rating <= 5 && e.rating >= 4.3
-                      ? "Excellent"
-                      : e.rating < 4.3 && e.rating >= 3.5
-                      ? "Very Good"
-                      : "Good"}
-                  </span>
-                  <h1>{e.name}</h1>
-                  <small>{e.location}</small>
-                  <h5>Couple Friendly</h5>
-                  <h6>
-                    <BsCheck /> Book with ₹0 Payment
-                  </h6>
-                  <h6>
-                    <BsCheck />
-                    Free Cancellation
-                  </h6>
-                  <h4>
-                    <BsFillLightningFill />
-                    100% Monet Back Guarantee on Clean rooms with TV, AC & Free
-                    Wi-Fi
-                  </h4>
-                </section>
-                <section>
-                  <strike>
-                    ₹ {Math.ceil(e.price + percentage(10, e.price))}
-                  </strike>
-                  <h1>₹ {e.price}</h1>
-                  <small>
-                    + ₹{Math.ceil(percentage(18, e.price))} taxes & fees
-                  </small>
-                  <p>Per Night</p>
-                </section>
-              </div>
-            ))}
+            {hotelData.map((e) => {
+              const mainImage = mainImages[e._id];
+              return (
+                <div className="mainHotel" key={e._id}>
+                  <section>
+                    <img src={mainImage || e.image[0]} alt="" />
+                    <div>
+                      {e.image.slice(0,4).map((image, imgIndex) => (
+                        <img
+                          key={imgIndex}
+                          src={image}
+                          onMouseOver={() => handleImageHover(e._id, image)}
+                          alt={`Hotel Image ${imgIndex}`}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                  <section>
+                    <span>
+                      <p>{e.rating.toFixed(1)}</p>
+                      {e.rating <= 5 && e.rating >= 4.3
+                        ? "Excellent"
+                        : e.rating < 4.3 && e.rating >= 3.5
+                        ? "Very Good"
+                        : "Good"}
+                    </span>
+                    <h1>{e.name}</h1>
+                    <small>{e.location}</small>
+                    <h5>Couple Friendly</h5>
+                    <h6>
+                      <BsCheck /> Book with ₹0 Payment
+                    </h6>
+                    <h6>
+                      <BsCheck />
+                      Free Cancellation
+                    </h6>
+                    <h4>
+                      <BsFillLightningFill />
+                      100% Monet Back Guarantee on Clean rooms with TV, AC &
+                      Free Wi-Fi
+                    </h4>
+                  </section>
+                  <section>
+                    <strike>
+                      ₹ {Math.ceil(e.price + percentage(10, e.price))}
+                    </strike>
+                    <h1>₹ {e.price}</h1>
+                    <small>
+                      + ₹{Math.ceil(percentage(18, e.price))} taxes & fees
+                    </small>
+                    <p>Per Night</p>
+                  </section>
+                </div>
+              );
+            })}
           </HotelList>
         </div>
       )}
