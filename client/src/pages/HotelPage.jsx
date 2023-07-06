@@ -12,6 +12,7 @@ import Sidebar from "../components/Sidebar";
 import axios from "axios";
 import { url } from "../components/url";
 import CircularProgress from "@mui/material/CircularProgress";
+import { toIndianCurrency } from "../components/toIndianCurrency";
 export default function HotelPage() {
   const location = useLocation();
   const [isSticky, setIsSticky] = useState(false);
@@ -33,14 +34,13 @@ export default function HotelPage() {
     width: "100%",
   };
   const navbarStyles1 = {
-    display: isSticky ? "none" : "block",
+    visibility: isSticky ? "hidden" : "visible",
   };
   const navbarStyle2 = {
     position: isSticky ? "fixed" : "relative",
     top: isSticky ? "65px" : null,
     width: "100%",
   };
-  const navbarStyle3 = {};
   //city
   const cities = [
     "Mumbai",
@@ -129,16 +129,35 @@ export default function HotelPage() {
   //date
   const [hotelLoading, setHotelLoading] = useState(false);
   const [hotelData, setHotelData] = useState([]);
+  const [sortBy, setSortBy] = useState("");
+  const [searchQuery, setSearchQuery] = useState();
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery) {
+        fetchHotelData();
+      } else {
+        null;
+      }
+    }, 2000);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+  const handleInputSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
   const fetchHotelData = async () => {
     setHotelLoading(true);
-    await axios.get(`${url}/hotel/${location.state.city}`).then((res) => {
-      setHotelData(res.data);
-      setHotelLoading(false);
-    });
+    await axios
+      .get(`${url}/hotel/${location.state.city}`, {
+        params: { sortBy, city: searchTerm, searchQuery },
+      })
+      .then((res) => {
+        setHotelData(res.data);
+        setHotelLoading(false);
+      });
   };
   useEffect(() => {
     fetchHotelData();
-  }, [location.state.city]);
+  }, [searchTerm, sortBy]);
   function percentage(percentageValue, totalValue) {
     return (percentageValue * totalValue) / 100;
   }
@@ -230,15 +249,11 @@ export default function HotelPage() {
         <div>
           <label htmlFor="">
             SORT BY:
-            <select name="" id="">
-              <option value="Featured">Featured</option>
-              <option value="Price (Highest First)">
-                Price (Highest First)
-              </option>
-              <option value="Price (Lowest First)">Price (Lowest First)</option>
-              <option value="User Rating(Highest First)">
-                User Rating (Highest First)
-              </option>
+            <select name="" id="" onChange={(e) => setSortBy(e.target.value)}>
+              <option value="">Featured</option>
+              <option value="price_desc">Price (Highest First)</option>
+              <option value="price_asc">Price (Lowest First)</option>
+              <option value="rate_desc">User Rating (Highest First)</option>
             </select>
           </label>
           <div>
@@ -248,6 +263,8 @@ export default function HotelPage() {
               name=""
               id=""
               placeholder="Search for locality / hotel name"
+              onChange={handleInputSearch}
+              value={searchQuery}
             />
           </div>
         </div>
@@ -272,7 +289,7 @@ export default function HotelPage() {
             gap: "20px",
           }}
         >
-          <Sidebar />
+          {/* <Sidebar /> */}
           <HotelList>
             <h1>Popular in {location.state.city}</h1>
             {hotelData.map((e) => {
@@ -282,7 +299,7 @@ export default function HotelPage() {
                   <section>
                     <img src={mainImage || e.image[0]} alt="" />
                     <div>
-                      {e.image.slice(0,4).map((image, imgIndex) => (
+                      {e.image.slice(0, 4).map((image, imgIndex) => (
                         <img
                           key={imgIndex}
                           src={image}
@@ -319,11 +336,14 @@ export default function HotelPage() {
                   </section>
                   <section>
                     <strike>
-                      ₹ {Math.ceil(e.price + percentage(10, e.price))}
+                      {toIndianCurrency(
+                        Math.ceil(e.price + percentage(10, e.price))
+                      )}
                     </strike>
-                    <h1>₹ {e.price}</h1>
+                    <h1>{toIndianCurrency(e.price)}</h1>
                     <small>
-                      + ₹{Math.ceil(percentage(18, e.price))} taxes & fees
+                      + {toIndianCurrency(Math.ceil(percentage(18, e.price)))}{" "}
+                      taxes & fees
                     </small>
                     <p>Per Night</p>
                   </section>
@@ -506,6 +526,7 @@ const Nav2 = styled.nav`
 `;
 const HotelList = styled.div`
   width: 80%;
+  margin: auto;
   .mainHotel {
     border: 1px solid gray;
     margin-top: 10px;
