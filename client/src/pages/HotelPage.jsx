@@ -157,7 +157,7 @@ export default function HotelPage() {
   };
   useEffect(() => {
     fetchHotelData();
-  }, [searchTerm, sortBy]);
+  }, [location.state.city,searchTerm, sortBy]);
   function percentage(percentageValue, totalValue) {
     return (percentageValue * totalValue) / 100;
   }

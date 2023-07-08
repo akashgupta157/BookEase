@@ -38,4 +38,17 @@ hotelRouter.get('/:city', async (req, res) => {
         res.json({ error: 'Internal server error' });
     }
 });
+hotelRouter.get('/:hotelId', async (req, res) => {
+    const { hotelId } = req.params;
+    try {
+        const hotel = await Hotel.findById(hotelId);
+        if (!hotel) {
+            return res.status(404).json({ error: 'Hotel not found.' });
+        }
+        res.json(hotel);
+    } catch (error) {
+        res.json({ error: 'Internal server error' });
+    }
+});
+
 module.exports = hotelRouter
