@@ -9,7 +9,19 @@ hotelRouter.post('/createHotel', async (req, res) => {
         res.json({ error: 'Internal server error' });
     }
 });
-hotelRouter.get('/:city', async (req, res) => {
+hotelRouter.get('/:id', async (req, res) => {
+    try {
+        const hotel = await Hotel.findById(req.params.id);
+        if (!hotel) {
+            return res.status(404).json({ error: 'Hotel not found' });
+        }
+        res.json(hotel);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+hotelRouter.get('/city', async (req, res) => {
     const { city, sortBy, searchQuery } = req.query;
     try {
         let query = { city };
@@ -38,17 +50,5 @@ hotelRouter.get('/:city', async (req, res) => {
         res.json({ error: 'Internal server error' });
     }
 });
-hotelRouter.get('/:id', async (req, res) => {
-    try {
-        const hotel = await Hotel.findById(req.params.id);
-        if (!hotel) {
-            return res.json({ error: 'Hotel not found' });
-        }
-        res.json(hotel);
-    } catch (error) {
-        console.error(error);
-        res.json({ error: 'Server error' });
-    }
-})
 
 module.exports = { hotelRouter }

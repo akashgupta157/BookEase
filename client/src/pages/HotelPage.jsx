@@ -147,7 +147,7 @@ export default function HotelPage() {
   const fetchHotelData = async () => {
     setHotelLoading(true);
     await axios
-      .get(`${url}/hotel/${location.state.city}`, {
+      .get(`${url}/hotel/city`, {
         params: { city: searchTerm, sortBy, searchQuery },
       })
       .then((res) => {
@@ -167,6 +167,9 @@ export default function HotelPage() {
       ...prevMainImages,
       [hotelId]: image,
     }));
+  };
+  const goHotel = (e) => {
+    axios.get(`${url}/hotel/${e}`).then(res=>console.log(res.data))
   };
   return (
     <>
@@ -247,9 +250,13 @@ export default function HotelPage() {
       </Nav1>
       <Nav2 style={navbarStyle2}>
         <div>
-          <label htmlFor="">
+          <label htmlFor="sort">
             SORT BY:
-            <select name="" id="" onChange={(e) => setSortBy(e.target.value)}>
+            <select
+              name=""
+              id="sort"
+              onChange={(e) => setSortBy(e.target.value)}
+            >
               <option value="">Featured</option>
               <option value="price_desc">Price (Highest First)</option>
               <option value="price_asc">Price (Lowest First)</option>
@@ -295,7 +302,11 @@ export default function HotelPage() {
             {hotelData.map((e) => {
               const mainImage = mainImages[e._id];
               return (
-                <div className="mainHotel" key={e._id}>
+                <div
+                  className="mainHotel"
+                  key={e._id}
+                  onClick={() => goHotel(e._id)}
+                >
                   <section>
                     <img src={mainImage || e.image[0]} alt="" />
                     <div>
@@ -498,12 +509,14 @@ const Nav2 = styled.nav`
       color: #4a4a4a;
       font-weight: bold;
       select {
+        cursor: pointer;
         border: 0px;
         outline: none;
         background-color: transparent;
         color: #33a5fe;
         font-size: medium;
         width: fit-content;
+        -webkit-appearance: none;
         option {
           color: black;
         }
