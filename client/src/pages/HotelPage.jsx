@@ -148,7 +148,7 @@ export default function HotelPage() {
     setHotelLoading(true);
     await axios
       .get(`${url}/hotel/${location.state.city}`, {
-        params: { sortBy, city: searchTerm, searchQuery },
+        params: { city: searchTerm, sortBy, searchQuery },
       })
       .then((res) => {
         setHotelData(res.data);
@@ -157,7 +157,7 @@ export default function HotelPage() {
   };
   useEffect(() => {
     fetchHotelData();
-  }, [location.state.city,searchTerm, sortBy]);
+  }, [location.state.city, searchTerm, sortBy]);
   function percentage(percentageValue, totalValue) {
     return (percentageValue * totalValue) / 100;
   }

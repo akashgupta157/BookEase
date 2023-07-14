@@ -27,9 +27,9 @@ hotelRouter.get('/:city', async (req, res) => {
         if (sortBy === 'price_asc') {
             hotels = hotels.sort((a, b) => a.price - b.price);
         } else if (sortBy === 'price_desc') {
-            hotels = hotels.sort((a, b) => a.price - b.price);
-        } else if (sortBy === 'rating_desc') {
-            hotels = hotels.sort((a, b) => a.price - b.price);
+            hotels = hotels.sort((a, b) => b.price - a.price);
+        } else if (sortBy === 'rate_desc') {
+            hotels = hotels.sort((a, b) => b.rating - a.rating);
         } else {
             hotels
         }
@@ -38,17 +38,17 @@ hotelRouter.get('/:city', async (req, res) => {
         res.json({ error: 'Internal server error' });
     }
 });
-hotelRouter.get('/:hotelId', async (req, res) => {
-    const { hotelId } = req.params;
+hotelRouter.get('/:id', async (req, res) => {
     try {
-        const hotel = await Hotel.findById(hotelId);
+        const hotel = await Hotel.findById(req.params.id);
         if (!hotel) {
-            return res.status(404).json({ error: 'Hotel not found.' });
+            return res.json({ error: 'Hotel not found' });
         }
         res.json(hotel);
     } catch (error) {
-        res.json({ error: 'Internal server error' });
+        console.error(error);
+        res.json({ error: 'Server error' });
     }
-});
+})
 
-module.exports = hotelRouter
+module.exports = { hotelRouter }
