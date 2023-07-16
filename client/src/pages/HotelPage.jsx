@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { CiLocationOn } from "react-icons/ci";
 import {
@@ -15,6 +15,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { toIndianCurrency } from "../components/toIndianCurrency";
 export default function HotelPage() {
   const location = useLocation();
+  const Nav = useNavigate();
   const [isSticky, setIsSticky] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
@@ -147,7 +148,7 @@ export default function HotelPage() {
   const fetchHotelData = async () => {
     setHotelLoading(true);
     await axios
-      .get(`${url}/hotel/city`, {
+      .get(`${url}/hotel`, {
         params: { city: searchTerm, sortBy, searchQuery },
       })
       .then((res) => {
@@ -169,7 +170,7 @@ export default function HotelPage() {
     }));
   };
   const goHotel = (e) => {
-    axios.get(`${url}/hotel/${e}`).then(res=>console.log(res.data))
+    Nav(`/hotel/` + e);
   };
   return (
     <>

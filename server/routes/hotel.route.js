@@ -21,7 +21,7 @@ hotelRouter.get('/:id', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
-hotelRouter.get('/city', async (req, res) => {
+hotelRouter.get('/', async (req, res) => {
     const { city, sortBy, searchQuery } = req.query;
     try {
         let query = { city };
