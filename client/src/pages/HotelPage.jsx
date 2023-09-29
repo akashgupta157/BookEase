@@ -243,10 +243,9 @@ export default function HotelPage() {
         </nav>
         <nav style={navbarStyles1}>
           <div>
-            <Link to="/">HOME</Link>›
-            <p>Hotels and more in {location.state.city}</p>
+            <Link to="/">HOME</Link>›<p>Hotels and more in {searchTerm}</p>
           </div>
-          <h1>1000 Properties in {location.state.city}</h1>
+          <h1>1000 Properties in {searchTerm}</h1>
         </nav>
       </Nav1>
       <Nav2 style={navbarStyle2}>
@@ -299,7 +298,7 @@ export default function HotelPage() {
         >
           {/* <Sidebar /> */}
           <HotelList>
-            <h1>Popular in {location.state.city}</h1>
+            <h1>Popular in {searchTerm}</h1>
             {hotelData.map((e) => {
               const mainImage = mainImages[e._id];
               return (

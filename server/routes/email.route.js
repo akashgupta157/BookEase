@@ -15,7 +15,7 @@ mailRouter.post('/', async (req, res) => {
     const mailOptions = {
         from: 'bookease401@gmail.com',
         to: to,
-        subject: "OTP verification from BookEase.com",
+        subject: "OTP verification from BookEase",
         html: `
         <p>Hi,</p>
         <p>Your OTP is: <strong>${otp}</strong></p>
@@ -23,7 +23,7 @@ mailRouter.post('/', async (req, res) => {
         <p>Note: This OTP is valid for a single use and will expire after a certain period of time.</p>
         <p>If you didn't request this OTP, please ignore this email.</p>
         <p>Regards,</p>
-        <p>BookEase.com</p>
+        <p>BookEase</p>
       `,
     }
     transporter.sendMail(mailOptions, function (err, info) {

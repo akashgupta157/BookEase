@@ -18,8 +18,9 @@ export const SingleHotelPage = () => {
   useEffect(() => {
     getHotel();
   }, [param]);
+  console.log(data);
   return (
-    <Div>
+    <>
       {loading ? (
         <div
           style={{
@@ -30,8 +31,18 @@ export const SingleHotelPage = () => {
         >
           <CircularProgress size={80} />
         </div>
-      ) : null}
-    </Div>
+      ) : (
+        <Div>
+          <img id="mainImg" src={data?.image[0]} alt="" />
+        </Div>
+      )}
+    </>
   );
 };
-const Div = styled.div``;
+const Div = styled.div`
+  #mainImg {
+    width: 100%;
+    height: 70vh;
+    object-fit: contain;
+  }
+`;
