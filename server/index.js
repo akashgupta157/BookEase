@@ -5,7 +5,6 @@ const { connection } = require("./db");
 const { userRouter } = require("./routes/user.route");
 const { mailRouter } = require("./routes/email.route");
 const { hotelRouter } = require("./routes/hotel.route");
-const { auth } = require("./middlewares/auth.middleware");
 app.use(cors());
 app.use(express.json());
 app.use("/user", userRouter);

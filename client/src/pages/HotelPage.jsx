@@ -152,6 +152,7 @@ export default function HotelPage() {
         params: { city: searchTerm, sortBy, searchQuery },
       })
       .then((res) => {
+        console.log(res.data)
         setHotelData(res.data);
         setHotelLoading(false);
       });
@@ -308,9 +309,9 @@ export default function HotelPage() {
                   onClick={() => goHotel(e._id)}
                 >
                   <section>
-                    <img src={mainImage || e.image[0]} alt="" />
+                    <img src={mainImage || e.images[0]} alt="" />
                     <div>
-                      {e.image.slice(0, 4).map((image, imgIndex) => (
+                      {e.images.slice(0, 4).map((image, imgIndex) => (
                         <img
                           key={imgIndex}
                           src={image}

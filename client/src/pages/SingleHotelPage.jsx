@@ -33,7 +33,7 @@ export const SingleHotelPage = () => {
         </div>
       ) : (
         <Div>
-          <img id="mainImg" src={data?.image[0]} alt="" />
+          <img id="mainImg" src={data.images} alt="" />
         </Div>
       )}
     </>
@@ -42,7 +42,7 @@ export const SingleHotelPage = () => {
 const Div = styled.div`
   #mainImg {
     width: 100%;
-    height: 70vh;
-    object-fit: contain;
+    height: 80vh;
+    object-fit: cover;
   }
 `;
