@@ -152,7 +152,6 @@ export default function HotelPage() {
         params: { city: searchTerm, sortBy, searchQuery },
       })
       .then((res) => {
-        console.log(res.data)
         setHotelData(res.data);
         setHotelLoading(false);
       });
@@ -171,7 +170,7 @@ export default function HotelPage() {
     }));
   };
   const goHotel = (e) => {
-    Nav(`/hotel/` + e);
+    Nav(`/hotel/` + e, { state: location.state });
   };
   return (
     <>
@@ -297,7 +296,7 @@ export default function HotelPage() {
             gap: "20px",
           }}
         >
-          {/* <Sidebar /> */}
+          <Sidebar />
           <HotelList>
             <h1>Popular in {searchTerm}</h1>
             {hotelData.map((e) => {
@@ -556,6 +555,7 @@ const HotelList = styled.div`
       gap: 10px;
       > img {
         width: 100%;
+        border-radius: 5px;
       }
       div {
         display: flex;
@@ -564,6 +564,7 @@ const HotelList = styled.div`
           cursor: pointer;
           width: 58.5px;
           object-fit: contain;
+          border-radius: 5px;
         }
       }
     }

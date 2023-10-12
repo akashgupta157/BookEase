@@ -27,7 +27,7 @@ export default function Navbar() {
   const location = useLocation();
   return (
     <DIV page={location.pathname}>
-      <img src={logo} alt="" onClick={()=>navigate('/')}/>
+      <img src={logo} alt="" onClick={() => navigate("/")} />
       <div className="tab">
         <div>
           <img src={hotel} alt="" />
@@ -124,7 +124,7 @@ const DIV = styled.div`
         color: white;
         background-color: #008dfe;
         border-radius: 10px;
-        padding: 2px;
+        padding: 2px 5px;
       }
     }
   }
