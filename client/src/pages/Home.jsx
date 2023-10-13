@@ -16,11 +16,13 @@ import { FcNext, FcPrevious } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
 import AuthModel from "../components/AuthModel";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { url } from "../components/url";
+import { setDates, updateSearch } from "../../redux/searchReducer/action";
 export default function Home() {
+  const search = useSelector((state) => state.searchReducer);
   //city
   const cities = [
     "Mumbai",
@@ -67,7 +69,7 @@ export default function Home() {
     "Chandigarh",
     // Add more cities as needed
   ];
-  const [searchTerm, setSearchTerm] = useState(cities[0]);
+  const [searchTerm, setSearchTerm] = useState(search.city || cities[0]);
   const [matchedCities, setMatchedCities] = useState([]);
   const handleInputChange = (event) => {
     const searchTerm = event.target.value.toLowerCase();
@@ -84,7 +86,9 @@ export default function Home() {
   //city
   //date
   const currentDate = new Date().toISOString().split("T")[0];
-  const [checkInDate, setCheckInDate] = useState(currentDate);
+  const [checkInDate, setCheckInDate] = useState(
+    search.checkInDate || currentDate
+  );
   const getCurrentDayFormatted = () => {
     const currentDate = new Date();
     const options = { weekday: "long" };
@@ -104,7 +108,9 @@ export default function Home() {
     const nextDay = currentDate.toISOString().split("T")[0];
     return nextDay;
   };
-  const [checkOutDate, setCheckOutDate] = useState(getNextDayFormatted());
+  const [checkOutDate, setCheckOutDate] = useState(
+    search.checkOutDate || getNextDayFormatted()
+  );
   const [checkOutDay, setCheckOutDay] = useState(getCurrentDayFormatted());
   useEffect(() => {
     const dateObj = new Date(checkOutDate);
@@ -283,6 +289,7 @@ export default function Home() {
     setOpen(false);
   };
   const auth = useSelector((state) => state.authReducer.isAuthenticated);
+  console.log(search);
   const navigate = useNavigate();
   const obj = {
     city: searchTerm,
@@ -299,6 +306,11 @@ export default function Home() {
   useEffect(() => {
     getBackend();
   }, []);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(updateSearch(searchTerm));
+    dispatch(setDates(checkInDate, checkOutDate));
+  }, [searchTerm, checkInDate, checkOutDate]);
   return (
     <>
       <DIV city={matchedCities}>

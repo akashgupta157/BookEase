@@ -43,7 +43,10 @@ export default function Navbar() {
         </div>
         <div>
           <img src={holiday} alt="" />
-          <p>Holiday Packages</p>
+          <p>
+            Holiday <br />
+            Packages
+          </p>
         </div>
         <div>
           <img src={train} alt="" />

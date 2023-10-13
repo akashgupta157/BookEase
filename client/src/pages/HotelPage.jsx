@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { CiLocationOn } from "react-icons/ci";
 import {
@@ -13,8 +13,9 @@ import axios from "axios";
 import { url } from "../components/url";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toIndianCurrency } from "../components/toIndianCurrency";
+import { useDispatch, useSelector } from "react-redux";
+import { setDates, updateSearch } from "../../redux/searchReducer/action";
 export default function HotelPage() {
-  const location = useLocation();
   const Nav = useNavigate();
   const [isSticky, setIsSticky] = useState(false);
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function HotelPage() {
     width: "100%",
   };
   //city
+  const search = useSelector((state) => state.searchReducer);
   const cities = [
     "Mumbai",
     "Delhi",
@@ -88,7 +90,7 @@ export default function HotelPage() {
     "Chandigarh",
     // Add more cities as needed
   ];
-  const [searchTerm, setSearchTerm] = useState(location.state.city);
+  const [searchTerm, setSearchTerm] = useState(search.city);
   const [matchedCities, setMatchedCities] = useState([]);
   const handleInputChange = (event) => {
     const searchTerm = event.target.value.toLowerCase();
@@ -105,7 +107,7 @@ export default function HotelPage() {
   //city
   //date
   const currentDate = new Date().toISOString().split("T")[0];
-  const [checkInDate, setCheckInDate] = useState(location.state.checkInDate);
+  const [checkInDate, setCheckInDate] = useState(search.checkInDate);
   const getCurrentDayFormatted = () => {
     const currentDate = new Date();
     const options = { weekday: "long" };
@@ -119,7 +121,7 @@ export default function HotelPage() {
     const selectedDay = dateObj.toLocaleDateString("en-IN", options);
     setCheckInDay(selectedDay);
   }, [checkInDate]);
-  const [checkOutDate, setCheckOutDate] = useState(location.state.checkOutDate);
+  const [checkOutDate, setCheckOutDate] = useState(search.checkOutDate);
   const [checkOutDay, setCheckOutDay] = useState(getCurrentDayFormatted());
   useEffect(() => {
     const dateObj = new Date(checkOutDate);
@@ -158,7 +160,7 @@ export default function HotelPage() {
   };
   useEffect(() => {
     fetchHotelData();
-  }, [location.state.city, searchTerm, sortBy]);
+  }, [search.city, searchTerm, sortBy]);
   function percentage(percentageValue, totalValue) {
     return (percentageValue * totalValue) / 100;
   }
@@ -170,8 +172,13 @@ export default function HotelPage() {
     }));
   };
   const goHotel = (e) => {
-    Nav(`/hotel/` + e, { state: location.state });
+    Nav(`/hotel/` + e);
   };
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(updateSearch(searchTerm));
+    dispatch(setDates(checkInDate, checkOutDate));
+  }, [searchTerm, checkInDate, checkOutDate]);
   return (
     <>
       <Nav1 city={matchedCities} style={navbarStyles}>
@@ -298,69 +305,77 @@ export default function HotelPage() {
         >
           <Sidebar />
           <HotelList>
-            <h1>Popular in {searchTerm}</h1>
-            {hotelData.map((e) => {
-              const mainImage = mainImages[e._id];
-              return (
-                <div
-                  className="mainHotel"
-                  key={e._id}
-                  onClick={() => goHotel(e._id)}
-                >
-                  <section>
-                    <img src={mainImage || e.images[0]} alt="" />
-                    <div>
-                      {e.images.slice(0, 4).map((image, imgIndex) => (
-                        <img
-                          key={imgIndex}
-                          src={image}
-                          onMouseOver={() => handleImageHover(e._id, image)}
-                          alt={`Hotel Image ${imgIndex}`}
-                        />
-                      ))}
+            {hotelData.length > 0 ? (
+              <>
+                {" "}
+                <h1>Popular in {searchTerm}</h1>
+                {hotelData.map((e) => {
+                  const mainImage = mainImages[e._id];
+                  return (
+                    <div
+                      className="mainHotel"
+                      key={e._id}
+                      onClick={() => goHotel(e._id)}
+                    >
+                      <section>
+                        <img src={mainImage || e.images[0]} alt="" />
+                        <div>
+                          {e.images.slice(0, 4).map((image, imgIndex) => (
+                            <img
+                              key={imgIndex}
+                              src={image}
+                              onMouseOver={() => handleImageHover(e._id, image)}
+                              alt={`Hotel Image ${imgIndex}`}
+                            />
+                          ))}
+                        </div>
+                      </section>
+                      <section>
+                        <span>
+                          <p>{e.rating.toFixed(1)}</p>
+                          {e.rating <= 5 && e.rating >= 4.3
+                            ? "Excellent"
+                            : e.rating < 4.3 && e.rating >= 3.5
+                            ? "Very Good"
+                            : "Good"}
+                        </span>
+                        <h1>{e.name}</h1>
+                        <small>{e.location}</small>
+                        <h5>Couple Friendly</h5>
+                        <h6>
+                          <BsCheck /> Book with ₹0 Payment
+                        </h6>
+                        <h6>
+                          <BsCheck />
+                          Free Cancellation
+                        </h6>
+                        <h4>
+                          <BsFillLightningFill />
+                          100% Monet Back Guarantee on Clean rooms with TV, AC &
+                          Free Wi-Fi
+                        </h4>
+                      </section>
+                      <section>
+                        <strike>
+                          {toIndianCurrency(
+                            Math.ceil(e.price + percentage(10, e.price))
+                          )}
+                        </strike>
+                        <h1>{toIndianCurrency(e.price)}</h1>
+                        <small>
+                          +{" "}
+                          {toIndianCurrency(Math.ceil(percentage(18, e.price)))}{" "}
+                          taxes & fees
+                        </small>
+                        <p>Per Night</p>
+                      </section>
                     </div>
-                  </section>
-                  <section>
-                    <span>
-                      <p>{e.rating.toFixed(1)}</p>
-                      {e.rating <= 5 && e.rating >= 4.3
-                        ? "Excellent"
-                        : e.rating < 4.3 && e.rating >= 3.5
-                        ? "Very Good"
-                        : "Good"}
-                    </span>
-                    <h1>{e.name}</h1>
-                    <small>{e.location}</small>
-                    <h5>Couple Friendly</h5>
-                    <h6>
-                      <BsCheck /> Book with ₹0 Payment
-                    </h6>
-                    <h6>
-                      <BsCheck />
-                      Free Cancellation
-                    </h6>
-                    <h4>
-                      <BsFillLightningFill />
-                      100% Monet Back Guarantee on Clean rooms with TV, AC &
-                      Free Wi-Fi
-                    </h4>
-                  </section>
-                  <section>
-                    <strike>
-                      {toIndianCurrency(
-                        Math.ceil(e.price + percentage(10, e.price))
-                      )}
-                    </strike>
-                    <h1>{toIndianCurrency(e.price)}</h1>
-                    <small>
-                      + {toIndianCurrency(Math.ceil(percentage(18, e.price)))}{" "}
-                      taxes & fees
-                    </small>
-                    <p>Per Night</p>
-                  </section>
-                </div>
-              );
-            })}
+                  );
+                })}
+              </>
+            ) : (
+              <h1>No Hotels Found :)</h1>
+            )}
           </HotelList>
         </div>
       )}

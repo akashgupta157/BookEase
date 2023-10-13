@@ -9,7 +9,6 @@ import { AiFillStar } from "react-icons/ai";
 export const SingleHotelPage = () => {
   const Nav = useNavigate();
   const param = useParams();
-  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     name: "",
@@ -61,7 +60,7 @@ export const SingleHotelPage = () => {
             <div id="breadcrumb">
               <p onClick={() => Nav("/")}>Home</p>
               <MdArrowForwardIos />
-              <p onClick={() => Nav("/hotel", { state: location.state })}>
+              <p onClick={() => Nav("/hotel")}>
                 Hotels in {data.city}
               </p>
               <MdArrowForwardIos />
@@ -73,7 +72,7 @@ export const SingleHotelPage = () => {
             </div>
             <section>
               <img src={data.images[4]} alt="" />
-              
+              <p>Premiere Room , King/Twin Be...</p>
               <button>book this now</button>
             </section>
           </div>
