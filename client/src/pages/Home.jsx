@@ -18,6 +18,8 @@ import Avatar from "@mui/material/Avatar";
 import AuthModel from "../components/AuthModel";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { url } from "../components/url";
 export default function Home() {
   //city
   const cities = [
@@ -290,6 +292,13 @@ export default function Home() {
   const to = () => {
     navigate("hotel", { state: obj });
   };
+  const getBackend = async () => {
+    const { data } = await axios.get(`${url}/user`);
+    console.log(data);
+  };
+  useEffect(() => {
+    getBackend();
+  }, []);
   return (
     <>
       <DIV city={matchedCities}>
