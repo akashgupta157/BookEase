@@ -309,7 +309,7 @@ const Div = styled.div`
       gap: 15px;
       > p {
         background-image: url(https://imgak.mmtcdn.com/pwa_v3/pwa_hotel_assets/map-bg-new.png);
-        padding: 20px;
+        padding: 30px;
         border-radius: 10px;
         svg {
           color: red;
