@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { url } from "../components/url";
 import { setDates, updateSearch } from "../../redux/searchReducer/action";
+import { Alert, Snackbar, SnackbarContent } from "@mui/material";
 export default function Home() {
   const search = useSelector((state) => state.searchReducer);
   //city
@@ -289,15 +290,20 @@ export default function Home() {
     setOpen(false);
   };
   const auth = useSelector((state) => state.authReducer.isAuthenticated);
-  console.log(search);
   const navigate = useNavigate();
-  const obj = {
-    city: searchTerm,
-    checkInDate,
-    checkOutDate,
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
   const to = () => {
-    navigate("hotel", { state: obj });
+    const checkInDate0 = new Date(checkInDate);
+    const checkOutDate0 = new Date(checkOutDate);
+    if (checkOutDate0 < checkInDate0) {
+      setOpenSnackbar(true);
+      // handleCloseSnackbar();
+    } else {
+      navigate("hotel");
+    }
   };
   const getBackend = async () => {
     const { data } = await axios.get(`${url}/user`);
@@ -313,6 +319,19 @@ export default function Home() {
   }, [searchTerm, checkInDate, checkOutDate]);
   return (
     <>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <Alert severity="error" sx={{ bgcolor: "red", color: "white" }}>
+          Checkout date cannot be before check-in date.
+        </Alert>
+      </Snackbar>
       <DIV city={matchedCities}>
         <nav>
           <img src={logo} alt="" />
@@ -404,7 +423,7 @@ export default function Home() {
                 min={currentDate}
                 onChange={(e) => {
                   setCheckInDate(e.target.value);
-                  handleCheckInDateChange();
+                  // handleCheckInDateChange();
                 }}
               />
               <span>{checkInDay}</span>
@@ -417,10 +436,10 @@ export default function Home() {
                 type="date"
                 id="checkInDate"
                 value={checkOutDate}
-                min={checkOutDate}
+                min={checkInDate}
                 onChange={(e) => {
                   setCheckOutDate(e.target.value);
-                  handleCheckInDateChange();
+                  // handleCheckInDateChange();
                 }}
               />
               <span>{checkOutDay}</span>

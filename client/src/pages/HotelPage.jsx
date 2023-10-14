@@ -90,7 +90,7 @@ export default function HotelPage() {
     "Chandigarh",
     // Add more cities as needed
   ];
-  const [searchTerm, setSearchTerm] = useState(search.city);
+  const [searchTerm, setSearchTerm] = useState(search.city || cities[0]);
   const [matchedCities, setMatchedCities] = useState([]);
   const handleInputChange = (event) => {
     const searchTerm = event.target.value.toLowerCase();
@@ -107,7 +107,9 @@ export default function HotelPage() {
   //city
   //date
   const currentDate = new Date().toISOString().split("T")[0];
-  const [checkInDate, setCheckInDate] = useState(search.checkInDate);
+  const [checkInDate, setCheckInDate] = useState(
+    search.checkInDate || currentDate
+  );
   const getCurrentDayFormatted = () => {
     const currentDate = new Date();
     const options = { weekday: "long" };
@@ -115,13 +117,21 @@ export default function HotelPage() {
     return currentDay;
   };
   const [checkInDay, setCheckInDay] = useState(getCurrentDayFormatted());
+  const getNextDayFormatted = () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 1);
+    const nextDay = currentDate.toISOString().split("T")[0];
+    return nextDay;
+  };
   useEffect(() => {
     const dateObj = new Date(checkInDate);
     const options = { weekday: "long" };
     const selectedDay = dateObj.toLocaleDateString("en-IN", options);
     setCheckInDay(selectedDay);
   }, [checkInDate]);
-  const [checkOutDate, setCheckOutDate] = useState(search.checkOutDate);
+  const [checkOutDate, setCheckOutDate] = useState(
+    search.checkOutDate || getNextDayFormatted()
+  );
   const [checkOutDay, setCheckOutDay] = useState(getCurrentDayFormatted());
   useEffect(() => {
     const dateObj = new Date(checkOutDate);
@@ -217,7 +227,7 @@ export default function HotelPage() {
                 min={currentDate}
                 onChange={(e) => {
                   setCheckInDate(e.target.value);
-                  handleCheckInDateChange();
+                  // handleCheckInDateChange();
                 }}
               />
             </section>
@@ -234,10 +244,10 @@ export default function HotelPage() {
                 type="date"
                 id="checkInDate"
                 value={checkOutDate}
-                min={checkOutDate}
+                min={checkInDate}
                 onChange={(e) => {
                   setCheckOutDate(e.target.value);
-                  handleCheckInDateChange();
+                  // handleCheckInDateChange();
                 }}
               />
             </section>
